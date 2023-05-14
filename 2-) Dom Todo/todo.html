@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+ 
+
+<body class="body bg-gradient-to-l from-sky-500 to-indigo-500">
+           <!-- HEAD TAG -->
+  <header>
+    <h1 class="text-5xl my-10 text-center">Todo List</h1>
+
+  </header>
+    <div class="container mx-auto w-1/2">
+                <!-- fORM -->
+
+      <form class="grid">
+                  
+        <div id="search" class=" border-double border-4 border-indigo-300 rounded-md flex">
+          <input
+            type="text"
+            placeholder="Add..."
+            class="w-full p-3 relative z-90"
+            id="todo-input"
+          />
+          <button
+            type="submit"
+            class="border-l px-6  text-white"
+            id="todo-button"
+
+          >
+            <i class="fas fa-plus-circle text-2xl"></i>
+          </button>
+        </div>
+        <div class="flex mt-5 mx-auto ">
+          <select name="todos" id="" class="h-10 border-double border-4 border-indigo-300 rounded-md filter-todo">
+               <option value="all">All</option>
+               <option value="completed">Completed</option>
+               <option value="uncompleted">Uncompleted</option>
+
+          </select>
+        </div>
+      </form>
+
+      <div class="flex justify-end my-5">
+
+          <!-- onclick="clearTodos()" -->
+
+        <button
+          class="p-3 bg-red-500 text-white rounded-md"
+          id="clear"
+        >
+          Temizle
+        </button>
+      </div>
+
+   <div class="todo-container">
+      <ul  class="border-double border-4 border-indigo-300 rounded-md p-6 flex flex-col gap-y-4" id="todosli"></ul>
+    </div>
+    </div>
+                <!-- alert -->
+                <div class="alert-wrapper">
+                  <div class="alert-success">
+                    <div>ekleme başarılı</div>
+                  </div>
+                  <div class="alert-warning">
+                    <div>Input alanı boş geçilemez!!</div>
+                  </div>
+                </div>
+
+
+       <script>
+
+        // inputa ulaş
+        //  buttona ulaş
+        //  ul ulaş
+      const textInputDOM = document.getElementById("todo-input");
+      const btnAddTodoDOM = document.getElementById("todo-button");
+      const todosList = document.querySelector("#todosli");
+      const btnClearTodos = document.getElementById("clear")
+      const todoFilter = document.querySelector(".filter-todo")
+      // alerts
+      const alertWarning= document.querySelector(".alert-warning")
+      const alertSuccess= document.querySelector(".alert-success")
+
+    // =====================================================================================================  
+
+        //    input içini değiştirmek için 
+      let textInputValue = "";
+        // listeye eklemek için array haline getir
+      let todosli = [];
+                //    input içindeki değeri(value ) değiştirmek için addEventListener kullan 
+      textInputDOM.addEventListener("change", function (event) {
+        textInputValue = event.target.value;
+      });
+                    //   butona tıklama listeye eklemek için addEventListener kullan ve input içini sıfırlamak için fonksiyon yaz
+
+//  ============================================================================================================
+
+            //    burda click olduğunda bu fonksiyon çalışsın demektir
+  // EVENTS          
+         btnAddTodoDOM.addEventListener("click", addTodo);
+        btnClearTodos.addEventListener("click",clearTodos)   
+         todoFilter.addEventListener("click", filterTodo)                                    
+// ==============================================================================================================
+
+      function addTodo(e) {
+            // her liste eklemesinde sayfa yenilenmesini önlemek için bunu kullan
+        e.preventDefault();
+                                  //  boş input veya dolu input için bildiri gönder 
+        const isEmpty = str => !str.trim().length;
+
+        alertWarning.style.display="block";
+
+        if(isEmpty(textInputDOM.value)){
+          setTimeout(() => {
+        alertWarning.style.display="none";
+             
+          }, 1500);
+    
+        }
+           else{
+        alertWarning.style.display="none";
+        alertSuccess.style.display="block";
+
+            setTimeout(() => {
+        alertSuccess.style.display="none";
+             
+          }, 1500);  
+           };
+
+        saveLocal(textInputValue.value)
+
+
+
+         //  inputa değer verip ekleyince inputu sıfırla 
+         textInputDOM.value = "";
+
+        //   unshift ile liste başına ekle her eklendiğinde 1 arttır
+        todosli.unshift({ id: todosli.length + 1, todoTitle: textInputValue });
+     
+        // her ekledğimizde çağıralım aşığıdaki fonksiyonu burda çağrıyoruz
+        displayTodos();
+
+      }
+
+//   ==================================================================================================================
+
+                // //    inputa verdiğimiz değerleri liste yapabilmek için bu fonksiyon unutma
+      function displayTodos() {
+           
+        let result = "";
+                                    //    eğer liste array 0 eşit ise liste boş yazsın değil ise aşagıdaki fonksyion çalışsın
+         if(todosli.length === 0 ){
+          todosList.innerHTML="Liste Boş!"
+         }else{
+
+                                // foreach ile addTodo foksiyonuna girilen değerleri döndürmek için result değişkenine ata
+                                todosli.forEach((item) => {
+            result += `
+         
+        <li
+        
+          class="flex justify-between border-double border-4 border-indigo-900 rounded-mdr px-4 py-3 flex bg-black text-white  "
+        >
+        <div class="todo">
+            <button class="completed-btn"><i class="fas fa-check-circle text-green-500 text-2xl"></i></button>
+          </div>
+          <span>  ${item.todoTitle}</span>
+          <button   onclick="deleteTodo(${item.id})"><i class="fa fa-minus-circle text-2xl text-red-500 "></i></button>
+
+        </li>
+            
+            `;
+          });
+                                    //  ulaştımız ul içerisine ekleyebilmemiz için innerHTML kullanırız ve result atarız            
+                                    todosList.innerHTML = result;
+         }
+
+        }
+// ===============================================================================================
+// filter
+  function filterTodo(e){
+    const todos = todosList.childNodes;
+    todos.forEach(function(item){
+      switch (e.taget.value) {
+        case "all":
+          item.style.display="flex"
+                  
+          break;
+          case "comlated":
+            if(item.classList.contain("comlated")){
+              item.style.display="flex"
+            }else{
+              item.style.display="none"
+            }
+          break;
+          case "uncomlated":
+            if(!item.classList.contain("complated")){
+              item.style.display="flex"
+            }else{
+              item.style.display="none"
+            }
+            break
+      }
+    })
+  }
+
+  //  ============================================================================================       
+                                                      // todo list öğe silmek iiçin
+           function deleteTodo(id) {
+             let deletedId;
+
+             for(let i in todosli  ){
+                if(todosli[i].id == id){
+                    deletedId = i;
+                }
+             }
+             todosli.splice(deletedId, 1)
+         displayTodos();
+               
+           }
+
+            function clearTodos () {
+              todosli.splice(0,todosli.length);
+                displayTodos();
+            }
+
+            
+         displayTodos();
+
+
+           // ============================================================
+        // save localStorage
+
+  function saveLocal (todo ) {
+    let todos;
+    if(localStorage.getItem("todos") === null ){
+      todos = [];
+    }else{
+      todos = JSON.parse(localStorage.getItem("todos"));
+    }
+   
+    todos.push(todo)
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }
+
+  function getTodos(){
+    let todos = [];
+    if(localStorage.getItem("todos") === null ){
+      todos = [];
+    }else{
+      todos = JSON.parse(localStorage.getItem("todos"));
+    }
+  }
+
+  function removeLocalStorage(todo){
+    let todos;
+    if(localStorage.getItem("todos") === null ){
+      todos = [];
+    }else{
+      todos = JSON.parse(localStorage.getItem("todos"));
+    }
+    const todoIndex = todo.children[1].innerText;
+  }
+
+       </script>
+</body>
+</html>

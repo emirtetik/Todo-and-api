@@ -1,0 +1,30 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
+ .body {
+       font-family: sans-serif;
+   }
+
+  .alert-wrapper{
+    position: absolute;
+    bottom: 10%;
+    right: 0%;
+
+  }
+  .alert-success,
+  .alert-warning{
+    padding: 1rem;
+    color: aliceblue;
+    width: 25rem;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+  }
+  .alert-warning{
+     background-color: brown;
+  }
+  .alert-success{
+     background-color: #5ebe92;
+  }
